@@ -1,0 +1,17 @@
+{
+  "name": "@affluo/backend",
+  "version": "1.0.0",
+  "description": "Spring Boot backend API for form building platform",
+  "scripts": {
+    "dev": "./gradlew bootRun",
+    "build": "./gradlew build",
+    "test": "./gradlew test",
+    "clean": "./gradlew clean",
+    "lint": "./gradlew checkstyleMain checkstyleTest",
+    "docker:build": "docker build -t affluo-backend .",
+    "docker:run": "docker run -p 8080:8080 affluo-backend"
+  },
+  "engines": {
+    "java": ">=17.0.0"
+  }
+}

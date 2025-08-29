@@ -1,0 +1,58 @@
+{
+  "name": "affluo-form-platform",
+  "version": "1.0.0",
+  "description": "Complete form building platform with admin console, mobile app, and backend",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev --workspace=packages/admin-console",
+    "dev:mobile": "npm run dev --workspace=packages/mobile-app",
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:marketing": "npm run dev --workspace=packages/marketing-website",
+    "build:admin": "npm run build --workspace=packages/admin-console",
+    "build:mobile": "npm run build --workspace=packages/mobile-app",
+    "build:backend": "npm run build --workspace=packages/backend",
+    "build:marketing": "npm run build --workspace=packages/marketing-website",
+    "build:all": "npm run build:admin && npm run build:mobile && npm run build:backend && npm run build:marketing",
+    "test:admin": "npm run test --workspace=packages/admin-console",
+    "test:mobile": "npm run test --workspace=packages/mobile-app",
+    "test:backend": "npm run test --workspace=packages/backend",
+    "test:marketing": "npm run test --workspace=packages/marketing-website",
+    "test:all": "npm run test:admin && npm run test:mobile && npm run test:backend && npm run test:marketing",
+    "lint:admin": "npm run lint --workspace=packages/admin-console",
+    "lint:mobile": "npm run lint --workspace=packages/mobile-app",
+    "lint:backend": "npm run lint --workspace=packages=packages/backend",
+    "lint:marketing": "npm run lint --workspace=packages/marketing-website",
+    "lint:all": "npm run lint:admin && npm run lint:mobile && npm run lint:backend && npm run lint:marketing",
+    "format:all": "prettier --write \"packages/**/*.{js,jsx,ts,tsx,json,md}\"",
+    "install:all": "npm install && npm run install:admin && npm run install:mobile && npm run install:backend && npm run install:marketing",
+    "install:admin": "npm install --workspace=packages/admin-console",
+    "install:mobile": "npm install --workspace=packages/mobile-app",
+    "install:backend": "npm install --workspace=packages/backend",
+    "install:marketing": "npm install --workspace=packages/marketing-website",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "forms",
+    "react",
+    "react-native",
+    "spring-boot",
+    "monorepo",
+    "typescript"
+  ],
+  "author": "Affluo Team",
+  "license": "MIT"
+}
+
