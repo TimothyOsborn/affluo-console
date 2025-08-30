@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@Document(collection = "forms")
+@Document(collection = "lists")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Form {
+public class List {
     
     @Id
     private String id;
@@ -25,36 +25,31 @@ public class Form {
     
     private String name;
     private String description;
-    private String status; // DRAFT, PUBLISHED, ARCHIVED
     
-    private List<FormField> fields;
-    private Map<String, Object> settings;
+    private List<ListField> fields;
+    private List<ListItem> items;
     
-    private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class FormField {
-        private String id;
-        private String type; // text, number, email, select, checkbox, radio, file, date
-        private String label;
-        private String placeholder;
+    public static class ListField {
+        private String name;
+        private String type; // text, number, email, select, date
         private Boolean required;
-        private Map<String, Object> validation;
-        private Map<String, Object> options;
-        private DataSource dataSource; // New field for list data sources
+        private List<String> options; // for select fields
         private Integer order;
     }
     
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DataSource {
-        private String type; // "list" or "manual"
-        private String listId; // ID of the list to use as data source
-        private String listField; // Field name in the list to use for options
+    public static class ListItem {
+        private String id;
+        private Map<String, Object> data; // dynamic field values
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
     }
 }
