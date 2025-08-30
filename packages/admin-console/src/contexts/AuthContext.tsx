@@ -79,7 +79,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 }
 
 interface AuthContextType extends AuthState {
-  login: (username: string, password: string) => Promise<void>
+  login: (credentials: { username: string; password: string }) => Promise<void>
   logout: () => void
   clearError: () => void
 }
@@ -115,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           dispatch({ type: 'AUTH_FAILURE', payload: 'Session expired' })
         }
       } else {
+        // No token found, set loading to false and not authenticated
         dispatch({ type: 'AUTH_FAILURE', payload: '' })
       }
     }
@@ -122,10 +123,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initAuth()
   }, [])
 
-  const login = async (username: string, password: string) => {
+  const login = async (credentials: { username: string; password: string }) => {
     try {
       dispatch({ type: 'AUTH_START' })
-      const { user, token } = await authService.login(username, password)
+      const { user, token } = await authService.login(credentials)
       localStorage.setItem('token', token)
       dispatch({ type: 'AUTH_SUCCESS', payload: { user, token } })
     } catch (error) {

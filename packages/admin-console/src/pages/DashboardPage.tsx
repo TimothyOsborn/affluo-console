@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext'
 import Card from '../components/UI/Card'
 import Button from '../components/UI/Button'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
+import CompanySelector from '../components/UI/CompanySelector'
 import { createCompanyApi } from '../services/api'
 
 const DashboardContainer = styled.div`
@@ -190,14 +191,16 @@ const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | undefined>(user?.companyId)
+  const [showCompanySelector, setShowCompanySelector] = useState(false)
 
   useEffect(() => {
     const loadDashboardData = async () => {
-      if (!user?.companyId) return
+      if (!selectedCompanyId) return
 
       try {
         setIsLoading(true)
-        const api = createCompanyApi(user.companyId)
+        const api = createCompanyApi(selectedCompanyId)
 
         // Fetch dashboard data
         const [formsResponse, submissionsResponse] = await Promise.all([
@@ -258,13 +261,30 @@ const DashboardPage: React.FC = () => {
     }
 
     loadDashboardData()
-  }, [user?.companyId, theme.colors])
+  }, [selectedCompanyId, theme.colors])
+
+  const handleCompanySelect = (companyId: string) => {
+    setSelectedCompanyId(companyId)
+    setShowCompanySelector(false)
+  }
 
   if (isLoading) {
     return (
       <LoadingContainer>
         <LoadingSpinner size="large" />
       </LoadingContainer>
+    )
+  }
+
+  // Show company selector if no company is selected or if user wants to switch
+  if (showCompanySelector || !selectedCompanyId) {
+    return (
+      <DashboardContainer>
+        <CompanySelector
+          onCompanySelect={handleCompanySelect}
+          selectedCompanyId={selectedCompanyId}
+        />
+      </DashboardContainer>
     )
   }
 
@@ -277,12 +297,20 @@ const DashboardPage: React.FC = () => {
             Welcome back, {user?.username}! Here's what's happening with your forms.
           </WelcomeMessage>
         </div>
-        <Button
-          variant="primary"
-          onClick={() => window.location.href = `/companies/${user?.companyId}/forms/new`}
-        >
-          Create New Form
-        </Button>
+        <div style={{ display: 'flex', gap: theme.spacing.md }}>
+          <Button
+            variant="outlined"
+            onClick={() => setShowCompanySelector(true)}
+          >
+            Switch Company
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => window.location.href = `/companies/${selectedCompanyId}/forms/new`}
+          >
+            Create New Form
+          </Button>
+        </div>
       </PageHeader>
 
       <StatsGrid>
@@ -368,19 +396,19 @@ const DashboardPage: React.FC = () => {
           <h2>Quick Actions</h2>
           <ActionButton
             variant="outlined"
-            onClick={() => window.location.href = `/companies/${user?.companyId}/forms/new`}
+            onClick={() => window.location.href = `/companies/${selectedCompanyId}/forms/new`}
           >
             ➕ Create Form
           </ActionButton>
           <ActionButton
             variant="outlined"
-            onClick={() => window.location.href = `/companies/${user?.companyId}/submissions`}
+            onClick={() => window.location.href = `/companies/${selectedCompanyId}/submissions`}
           >
             📊 View Submissions
           </ActionButton>
           <ActionButton
             variant="outlined"
-            onClick={() => window.location.href = `/companies/${user?.companyId}/users`}
+            onClick={() => window.location.href = `/companies/${selectedCompanyId}/users`}
           >
             👥 Manage Users
           </ActionButton>

@@ -135,13 +135,21 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('Login form submitted with:', formData)
+    
     if (!validateForm()) {
       return
     }
 
     try {
-      await login(formData.username, formData.password)
+      const credentials = {
+        username: formData.username,
+        password: formData.password
+      }
+      console.log('Calling login with credentials:', credentials)
+      await login(credentials)
     } catch (error) {
+      console.log('Login error in LoginPage:', error)
       // Error is handled by the auth context
     }
   }

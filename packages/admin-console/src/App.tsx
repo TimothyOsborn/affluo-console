@@ -3,13 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import Layout from './components/Layout/Layout'
 import LoginPage from './pages/LoginPage'
-import DashboardPage from './pages/DashboardPage'
-import FormsPage from './pages/FormsPage'
-import FormBuilderPage from './pages/FormBuilderPage'
-import FormViewPage from './pages/FormViewPage'
-import SubmissionsPage from './pages/SubmissionsPage'
-import SubmissionViewPage from './pages/SubmissionViewPage'
-import UsersPage from './pages/UsersPage'
 import LoadingSpinner from './components/UI/LoadingSpinner'
 import ErrorBoundary from './components/UI/ErrorBoundary'
 import './App.css'
@@ -22,9 +15,11 @@ const LazyFormViewPage = React.lazy(() => import('./pages/FormViewPage'))
 const LazySubmissionsPage = React.lazy(() => import('./pages/SubmissionsPage'))
 const LazySubmissionViewPage = React.lazy(() => import('./pages/SubmissionViewPage'))
 const LazyUsersPage = React.lazy(() => import('./pages/UsersPage'))
+const LazyListsPage = React.lazy(() => import('./pages/ListsPage'))
+const LazyListBuilderPage = React.lazy(() => import('./pages/ListBuilderPage'))
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, user } = useAuth()
 
   if (isLoading) {
     return (
@@ -46,6 +41,9 @@ function App() {
     )
   }
 
+  // Get company ID from authenticated user
+  const companyId = user?.companyId || 'company-1'
+
   return (
     <ErrorBoundary>
       <Layout>
@@ -53,13 +51,25 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<LazyDashboardPage />} />
-            <Route path="/companies/:companyId/forms" element={<LazyFormsPage />} />
-            <Route path="/companies/:companyId/forms/new" element={<LazyFormBuilderPage />} />
-            <Route path="/companies/:companyId/forms/:formId" element={<LazyFormViewPage />} />
-            <Route path="/companies/:companyId/forms/:formId/edit" element={<LazyFormBuilderPage />} />
-            <Route path="/companies/:companyId/submissions" element={<LazySubmissionsPage />} />
-            <Route path="/companies/:companyId/submissions/:submissionId" element={<LazySubmissionViewPage />} />
-            <Route path="/companies/:companyId/users" element={<LazyUsersPage />} />
+            <Route path="/forms" element={<Navigate to={`/companies/${companyId}/forms`} replace />} />
+            <Route path="/forms/new" element={<Navigate to={`/companies/${companyId}/forms/new`} replace />} />
+            <Route path="/forms/:formId" element={<Navigate to={`/companies/${companyId}/forms/:formId`} replace />} />
+            <Route path="/forms/:formId/edit" element={<Navigate to={`/companies/${companyId}/forms/:formId/edit`} replace />} />
+            <Route path="/submissions" element={<Navigate to={`/companies/${companyId}/submissions`} replace />} />
+            <Route path="/submissions/:submissionId" element={<Navigate to={`/companies/${companyId}/submissions/:submissionId`} replace />} />
+                             <Route path="/users" element={<Navigate to={`/companies/${companyId}/users`} replace />} />
+                 <Route path="/lists" element={<Navigate to={`/companies/${companyId}/lists`} replace />} />
+                 <Route path="/companies/:companyId/forms" element={<LazyFormsPage />} />
+                 <Route path="/companies/:companyId/forms/new" element={<LazyFormBuilderPage />} />
+                 <Route path="/companies/:companyId/forms/:formId" element={<LazyFormViewPage />} />
+                 <Route path="/companies/:companyId/forms/:formId/edit" element={<LazyFormBuilderPage />} />
+                 <Route path="/companies/:companyId/submissions" element={<LazySubmissionsPage />} />
+                 <Route path="/companies/:companyId/submissions/:submissionId" element={<LazySubmissionViewPage />} />
+                 <Route path="/companies/:companyId/users" element={<LazyUsersPage />} />
+                 <Route path="/companies/:companyId/lists" element={<LazyListsPage />} />
+                 <Route path="/companies/:companyId/lists/new" element={<LazyListBuilderPage />} />
+                 <Route path="/companies/:companyId/lists/:listId" element={<LazyListBuilderPage />} />
+                 <Route path="/companies/:companyId/lists/:listId/edit" element={<LazyListBuilderPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Suspense>

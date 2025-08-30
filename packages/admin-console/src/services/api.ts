@@ -1,4 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { mockApiService } from './mockData'
+
+// Check if mock mode is enabled
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === 'true'
+console.log('API Service - USE_MOCK_API:', USE_MOCK_API, 'Value:', import.meta.env.VITE_USE_MOCK_API)
 
 // Create axios instance with base configuration
 const api: AxiosInstance = axios.create({
@@ -67,6 +72,49 @@ api.interceptors.response.use(
 export const createCompanyApi = (companyId: string) => {
   const baseURL = `/companies/${companyId}`
   
+  if (USE_MOCK_API) {
+    // Return mock API functions
+    return {
+      // Forms
+      getForms: () => mockApiService.getForms(companyId),
+      getForm: (formId: string) => mockApiService.getForm(companyId, formId),
+      createForm: (schema: any) => mockApiService.createForm(companyId, schema),
+      updateForm: (formId: string, schema: any) => mockApiService.updateForm(companyId, formId, schema),
+      deleteForm: (formId: string) => mockApiService.deleteForm(companyId, formId),
+      
+      // Submissions
+      getSubmissions: (params?: { formId?: string; page?: number; size?: number }) => 
+        mockApiService.getSubmissions(companyId, params),
+      getSubmission: (submissionId: string) => mockApiService.getSubmission(companyId, submissionId),
+      createSubmission: (submission: any) => mockApiService.createSubmission(companyId, submission),
+      updateSubmission: (submissionId: string, submission: any) => 
+        mockApiService.updateSubmission(companyId, submissionId, submission),
+      deleteSubmission: (submissionId: string) => mockApiService.deleteSubmission(companyId, submissionId),
+      
+      // Users
+      getUsers: () => mockApiService.getUsers(companyId),
+      getUser: (userId: string) => mockApiService.getUser(companyId, userId),
+      createUser: (user: any) => mockApiService.createUser(companyId, user),
+      updateUser: (userId: string, user: any) => mockApiService.updateUser(companyId, userId, user),
+      deleteUser: (userId: string) => mockApiService.deleteUser(companyId, userId),
+      
+      // Teams
+      getTeams: () => mockApiService.getTeams(companyId),
+      getTeam: (teamId: string) => mockApiService.getTeam(companyId, teamId),
+      createTeam: (team: any) => mockApiService.createTeam(companyId, team),
+      updateTeam: (teamId: string, team: any) => mockApiService.updateTeam(companyId, teamId, team),
+      deleteTeam: (teamId: string) => mockApiService.deleteTeam(companyId, teamId),
+
+      // Lists
+      getLists: () => mockApiService.getLists(companyId),
+      getList: (listId: string) => mockApiService.getList(companyId, listId),
+      createList: (list: any) => mockApiService.createList(companyId, list),
+      updateList: (listId: string, list: any) => mockApiService.updateList(companyId, listId, list),
+      deleteList: (listId: string) => mockApiService.deleteList(companyId, listId),
+    }
+  }
+  
+  // Return real API functions
   return {
     // Forms
     getForms: () => api.get(`${baseURL}/forms`),
@@ -97,23 +145,64 @@ export const createCompanyApi = (companyId: string) => {
     createTeam: (team: any) => api.post(`${baseURL}/teams`, team),
     updateTeam: (teamId: string, team: any) => api.put(`${baseURL}/teams/${teamId}`, team),
     deleteTeam: (teamId: string) => api.delete(`${baseURL}/teams/${teamId}`),
+
+    // Lists
+    getLists: () => api.get(`${baseURL}/lists`),
+    getList: (listId: string) => api.get(`${baseURL}/lists/${listId}`),
+    createList: (list: any) => api.post(`${baseURL}/lists`, list),
+    updateList: (listId: string, list: any) => api.put(`${baseURL}/lists/${listId}`, list),
+    deleteList: (listId: string) => api.delete(`${baseURL}/lists/${listId}`),
   }
 }
 
 // Generic API functions
 export const apiClient = {
   // Auth
-  login: (credentials: { username: string; password: string }) => 
-    api.post('/auth/login', credentials),
-  refreshToken: (refreshToken: string) => 
-    api.post('/auth/refresh', { refreshToken }),
-  validateToken: () => api.get('/auth/validate'),
+  login: (credentials: { username: string; password: string }) => {
+    console.log('Login called with credentials:', credentials)
+    console.log('USE_MOCK_API in login:', USE_MOCK_API)
+    if (USE_MOCK_API) {
+      console.log('Using mock API for login')
+      return mockApiService.login(credentials)
+    }
+    console.log('Using real API for login')
+    return api.post('/auth/login', credentials)
+  },
+  
+  refreshToken: (refreshToken: string) => {
+    if (USE_MOCK_API) {
+      return mockApiService.refreshToken(refreshToken)
+    }
+    return api.post('/auth/refresh', { refreshToken })
+  },
+  
+  validateToken: () => {
+    if (USE_MOCK_API) {
+      return mockApiService.validateToken()
+    }
+    return api.get('/auth/validate')
+  },
   
   // Companies
-  getCompany: (companyId: string) => api.get(`/companies/${companyId}`),
+  getCompany: (companyId: string) => {
+    if (USE_MOCK_API) {
+      return mockApiService.getCompany(companyId)
+    }
+    return api.get(`/companies/${companyId}`)
+  },
+
+  getAllCompanies: () => {
+    if (USE_MOCK_API) {
+      return mockApiService.getAllCompanies()
+    }
+    return api.get('/companies')
+  },
   
   // WebSocket connection helper
   getWebSocketUrl: () => {
+    if (USE_MOCK_API) {
+      return mockApiService.getWebSocketUrl()
+    }
     const baseUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080/ws/sync'
     const token = localStorage.getItem('token')
     return token ? `${baseUrl}?token=${token}` : baseUrl

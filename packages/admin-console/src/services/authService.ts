@@ -30,9 +30,12 @@ export interface User {
 class AuthService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
+      console.log('AuthService login called with:', credentials)
       const response = await apiClient.login(credentials)
+      console.log('AuthService login response:', response)
       return response.data
     } catch (error: any) {
+      console.log('AuthService login error:', error)
       if (error.response?.status === 401) {
         throw new Error('Invalid username or password')
       }

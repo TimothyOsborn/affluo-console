@@ -63,7 +63,7 @@ interface Theme {
   }
 }
 
-const forestGreenTheme: Theme = {
+export const forestGreenTheme: Theme = {
   colors: {
     primary: '#228B22',
     primaryLight: '#32CD32',
